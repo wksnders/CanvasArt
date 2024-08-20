@@ -1,0 +1,39 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: top;
+	color: inherit;
+	line-height: inherit;
+	font-size: inherit;
+	font-family: inherit;
+	font-weight: inherit;
+    text-align: inherit;
+	box-sizing: border-box;
+}
+html,
+body {
+	height: 100%;
+	width: 100%;
+}
+body {
+	background-color: #000;
+	color: #9f0;
+	line-height: 16px;
+	font-size: 10px;
+	font-family: monaco, monospace;
+	font-weight: normal;
+	padding: 16px;
+}
+canvas {
+    border: 1px solid #333;
+}
+.container {
+    text-align: center;
+}
+.canvas-holder video, 
+.canvas-holder canvas {
+	/* display: block; */
+	min-width: 512px;
+	max-width: 512px;
+}
