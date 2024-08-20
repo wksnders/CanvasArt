@@ -13,17 +13,17 @@ var sprites = [];
 
 //represents a sprite to be rendered on screen
 class Sprite {
-    constructor(id, height, width, positionX = 0, positionY = 0, velocityX = 0, velocityY = 0) {
+    constructor(id,width,height, positionX = 0, positionY = 0,rotation = 0, velocityX = 0, velocityY = 0,angVel = 0) {
         this.id = id;
         this.active = true;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.rotation = 0;
-        this.height = height;
+        this.rotation = rotation;
         this.width = width;
+        this.height = height;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
-        this.angVel = 0;
+        this.angVel = angVel;
     }
     setActive(active){
         this.active = active;
@@ -56,8 +56,11 @@ class Sprite {
 var emitSprite = function(
     emitterX, 
     emitterY,
+    particleWidth = 40,
+    particleHeight = 20,
     speed = 100,
-    angle = Math.random() * tao
+    angle = Math.random() * tao,
+    rotationSpeed = 0
 ){
 
     // Calculate velocity components based on angle
@@ -66,13 +69,15 @@ var emitSprite = function(
 
      // Create a new sprite with velocity
      const newSprite = new Sprite(
-        sprites.length,
-        20,
-        20,
+        sprites.length,//TODO new Id system
+        particleWidth,
+        particleHeight,
         emitterX,
         emitterY,
+        angle,
         velocityX,
-        velocityY
+        velocityY,
+        rotationSpeed
     );
 
     // Set the velocity
@@ -93,17 +98,11 @@ var onUpdate = function(deltaTime){
     sprites.forEach(element => {
         element.update(deltaTime);
     });
-    sprites.forEach((sprite) => {
-        if (
-            sprite.positionX < 0 || sprite.positionX > canvasWidth ||
-            sprite.positionY < 0 || sprite.positionY > canvasHeight
-        ) {
-            sprite.setActive(false);
-        }
+    //delete sprites that go off screen
+    sprites = sprites.filter(sprite => {
+        return sprite.positionX > 0 && sprite.positionX < canvasWidth &&
+               sprite.positionY > 0 && sprite.positionY < canvasHeight;
     });
-    //todo delete sprites that go off screen
-
-
 }
 
 var drawBoxSprite = function(sprite,color){
@@ -111,11 +110,12 @@ var drawBoxSprite = function(sprite,color){
         return;
     }
     context.save();
-    context.rotate(sprite.rotation);
+    context.translate(sprite.positionX, sprite.positionY);
+    context.rotate(sprite.rotation - (tao/4));//start rotation from the positive y axis
     context.fillStyle = color;
     context.fillRect(
-        sprite.positionX - (sprite.width/2),
-        sprite.positionY - (sprite.height/2),
+        - (sprite.width/2),
+        - (sprite.height/2),
         sprite.width,
         sprite.height
     );
