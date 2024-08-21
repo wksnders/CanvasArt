@@ -7,168 +7,176 @@
 </head>
 <body>
     <div class="container">
-        <canvas id="display-canvas" width="512" height="384"></canvas>
+        <canvas 
+        id="display-canvas" 
+        width="512" 
+        height="384"
+        ></canvas>
     </div>
 
     <!-- form  -->
-     <form>
-        <div class="row">
-            <div class="form-field">
-                <button
-                    type="button"
-                >add</button>
-            </div>
-        </div>
-        <div class="emitter">
-            <h3>Emitter Configuration</h3>
-            <div class="row">
-                <div class="form-field">
-                    <label>
-                        <span class="label">pos x</span>
-                        <input 
-                            type="number" 
-                            min="0" 
-                            max="512" 
-                            v-model.number="emitter.positionX"
-                        >
-                        <input 
-                            type="range" 
-                            min="0" 
-                            max="512" 
-                            v-model.number="emitter.positionX"
-                        >
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label>
-                        <span class="label">pos y</span>
-                        <input 
-                            type="number" 
-                            min="5" 
-                            max="384" 
-                            v-model.number="emitter.positionY"
-                        >
-                        <input 
-                            type="range" 
-                            min="5" 
-                            max="384" 
-                            v-model.number="emitter.positionY"
-                        >
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-field">
-                    <label>
-                        <span class="label">interval</span>
-                        <input 
-                            type="number" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.interval"
-                        >
-                        <input 
-                            type="range" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.interval"
-                        >
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-field">
-                    <label>
-                        <span class="label">particleWidth</span>
-                        <input 
-                            type="number" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleWidth"
-                        >
-                        <input 
-                            type="range" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleWidth"
-                        >
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label>
-                        <span class="label">particleHeight</span>
-                        <input 
-                            type="number" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleHeight"
-                        >
-                        <input 
-                            type="range" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleHeight"
-                        >
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-field">
-                    <label>
-                        <span class="label">particleColor</span>
-                        <input 
-                            type="color"
-                            v-model="emitter.particleConfig.particleColor"
-                        >
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label>
-                        <span class="label">particleHeight</span>
-                        <input 
-                            type="number" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleHeight"
-                        >
-                        <input 
-                            type="range" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleHeight"
-                        >
-                    </label>
-                </div>
-                <div class="form-field">
-                    <label>
-                        <span class="label">particleSpeed</span>
-                        <input 
-                            type="number" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleSpeed"
-                        >
-                        <input 
-                            type="range" 
-                            min="5" 
-                            max="100" 
-                            v-model.number="emitter.particleConfig.particleSpeed"
-                        >
-                    </label>
-                </div>
-            </div>
+     <div id="app">
+        <form>
             <div class="row">
                 <div class="form-field">
                     <button
                         type="button"
-                    >delete</button>
+                        @click="addEmitter()"
+                    >add</button>
                 </div>
             </div>
-        </div>
-
-
-     </form>
-
+            <div 
+            v-for="emitter in emitters"
+            :key = emitter.id
+            >
+                <h3>Emitter Configuration</h3>
+                <div class="row">
+                    <div class="form-field">
+                        <label>
+                            <span class="label">pos x</span>
+                            <input 
+                                type="number" 
+                                min="0" 
+                                max="512" 
+                                v-model.number="emitter.positionX"
+                            >
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="512" 
+                                v-model.number="emitter.positionX"
+                            >
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label>
+                            <span class="label">pos y</span>
+                            <input 
+                                type="number" 
+                                min="5" 
+                                max="384" 
+                                v-model.number="emitter.positionY"
+                            >
+                            <input 
+                                type="range" 
+                                min="5" 
+                                max="384" 
+                                v-model.number="emitter.positionY"
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-field">
+                        <label>
+                            <span class="label">interval</span>
+                            <input 
+                                type="number" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.interval"
+                            >
+                            <input 
+                                type="range" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.interval"
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-field">
+                        <label>
+                            <span class="label">particleWidth</span>
+                            <input 
+                                type="number" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleWidth"
+                            >
+                            <input 
+                                type="range" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleWidth"
+                            >
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label>
+                            <span class="label">particleHeight</span>
+                            <input 
+                                type="number" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleHeight"
+                            >
+                            <input 
+                                type="range" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleHeight"
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-field">
+                        <label>
+                            <span class="label">particleColor</span>
+                            <input 
+                                type="color"
+                                v-model="emitter.particleColor"
+                            >
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label>
+                            <span class="label">particleHeight</span>
+                            <input 
+                                type="number" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleHeight"
+                            >
+                            <input 
+                                type="range" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleHeight"
+                            >
+                        </label>
+                    </div>
+                    <div class="form-field">
+                        <label>
+                            <span class="label">particleSpeed</span>
+                            <input 
+                                type="number" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleSpeed"
+                            >
+                            <input 
+                                type="range" 
+                                min="5" 
+                                max="100" 
+                                v-model.number="emitter.particleSpeed"
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-field">
+                        <button
+                            type="button"
+                            @click="removeEmitter(emitter)"
+                        >delete</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="./blockemitter.js"></script>
 </body>

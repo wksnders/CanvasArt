@@ -61,13 +61,13 @@ class Emitter {
         particleWidth = 40,
         particleHeight = 20,
         particleColor = '#FFF',
-        speed = 100,
+        particleSpeed = 100,
         angle = Math.random() * tao,
         rotationSpeed = 0
     ) {
         // Calculate velocity components based on angle
-        const velocityX = Math.cos(angle) * speed;
-        const velocityY = Math.sin(angle) * speed;
+        const velocityX = Math.cos(angle) * particleSpeed;
+        const velocityY = Math.sin(angle) * particleSpeed;
 
         // Create a new sprite with velocity
         const newSprite = new Sprite(
@@ -169,7 +169,7 @@ var createEmitter = function(
                 particleWidth = particleConfig.particleWidth || 40,
                 particleHeight = particleConfig.particleHeight || 20,
                 particleColor = particleConfig.particleColor || '#FFF',
-                speed = particleConfig.speed || 100
+                particleSpeed = particleConfig.particleSpeed || 100
             );
         }, 
         interval
@@ -182,7 +182,7 @@ var createEmitters = function(configurations = []) {
             config.positionX !== undefined ? config.positionX : canvasWidth / 2, 
             config.positionY !== undefined ? config.positionY : canvasHeight / 2, 
             config.interval || 500,
-            config.particleConfig
+            config
         );
     });
 }
@@ -205,45 +205,37 @@ var emitterConfig = [
         positionX: 100,
         positionY: 100,
         interval: 300,
-        particleConfig: {
-            particleWidth: 25,
-            particleHeight: 15,
-            particleColor: '#00FF00',
-            speed: 80
-        }
+        particleWidth: 25,
+        particleHeight: 15,
+        particleColor: '#00FF00',
+        particleSpeed: 80
     },
     {
         positionX: (canvasWidth) - 100,
         positionY: (canvasHeight) - 100,
         interval: 400,
-        particleConfig: {
-            particleWidth: 20,
-            particleHeight: 10,
-            particleColor: '#0000FF',
-            speed: 80
-        }
+        particleWidth: 20,
+        particleHeight: 10,
+        particleColor: '#0000FF',
+        particleSpeed: 80
     },
     {
         positionX: (canvasWidth) - 100,
         positionY: 100,
         interval: 400,
-        particleConfig: {
-            particleWidth: 15,
-            particleHeight: 5,
-            particleColor: '#FF0000',
-            speed: 80
-        }
+        particleWidth: 15,
+        particleHeight: 5,
+        particleColor: '#FF0000',
+        particleSpeed: 80
     },
     {
         positionX: 100,
         positionY: (canvasHeight) - 100,
         interval: 400,
-        particleConfig: {
-            particleWidth: 10,
-            particleHeight: 30,
-            particleColor: '#FF00FF',
-            particleSpeed: 80
-        }
+        particleWidth: 10,
+        particleHeight: 30,
+        particleColor: '#FF00FF',
+        particleSpeed: 80
     }
 ];
 
@@ -255,19 +247,41 @@ requestAnimationFrame(vsyncLoop);
 const { createApp, ref } = Vue
 
 createApp({
-    setup() {/*
-        const brickHeight = ref(20)
-        const brickWidth = ref(80)//observability, update template dependant on it.
-        const ballSize = ref(40)
-        const submitForm = function () {
-            onInitialize({
-                brickHeight : brickHeight.value,
-                brickWidth : brickWidth.value,
-                ballSize : ballSize.value
+    setup() {
+        let id = 0;
+        const emitters = ref([
+            {
+                id: id++,
+                positionX: 100,
+                positionY: 100,
+                interval: 300,
+                particleWidth: 25,
+                particleHeight: 15,
+                particleColor: '#00FF00',
+                particleSpeed: 80
+            }
+        ]);
+        function addEmitter() {
+            emitters.value.push({ 
+                id: id++,
+                positionX:  100,
+                positionY: 100,
+                interval: 300,
+                particleWidth: 25,
+                particleHeight: 15,
+                particleColor: '#00FF00',
+                particleSpeed: 80
             });
-        }*/
+        }
+      
+        function removeEmitter(emitter) {
+            emitters.value = emitters.value.filter((t) => t !== emitter);
+        }
+        
         return {
-
+            emitters,
+            addEmitter,
+            removeEmitter
         }
     }
 }).mount('#app')
