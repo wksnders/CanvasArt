@@ -5,11 +5,8 @@ var canvas = document.getElementById('display-canvas');
 var {width: canvasWidth, height: canvasHeight} = canvas;
 var context = canvas.getContext('2d');
 
-
-
 var isAnimationActive = true;
 var emitters = [];
-
 
 //represents a sprite to be rendered on screen
 class Sprite {
@@ -175,80 +172,90 @@ var createEmitter = function(
                 speed = particleConfig.speed || 100
             );
         }, 
-        interval = 500
+        interval
     );
 }
 
-var createEmitters = function(configurations) {
+var createEmitters = function(configurations = []) {
     configurations.forEach(config => {
-        createEmitter(config.positionX, config.positionY, config.interval,config.particleConfig);
+        createEmitter(
+            config.positionX !== undefined ? config.positionX : canvasWidth / 2, 
+            config.positionY !== undefined ? config.positionY : canvasHeight / 2, 
+            config.interval || 500,
+            config.particleConfig
+        );
     });
 }
 
-var onInitialize = function(config = {}){
+var onInitialize = function(config = []){
     emitters.length = 0;// Empty the array
-    createEmitters(config.emitters || []);
+    createEmitters(config);
 }
 
-var emitterConfig = {
-    emitters: [
-        { positionX: canvasWidth / 2, positionY: canvasHeight / 2, interval: 500 },
-        {
-            positionX: 100,
-            positionY: 100,
-            interval: 300,
-            particleConfig: {
-                particleWidth: 25,
-                particleHeight: 15,
-                particleColor: '#00FF00',
-                speed: 80
-            }
-        },
-        {
-            positionX: (canvasWidth) - 100,
-            positionY: (canvasHeight) - 100,
-            interval: 400,
-            particleConfig: {
-                particleWidth: 20,
-                particleHeight: 10,
-                particleColor: '#0000FF',
-                speed: 80
-            }
-        },
-        {
-            positionX: (canvasWidth) - 100,
-            positionY: 100,
-            interval: 400,
-            particleConfig: {
-                particleWidth: 15,
-                particleHeight: 5,
-                particleColor: '#FF0000',
-                speed: 80
-            }
-        },
-        {
-            positionX: 100,
-            positionY: (canvasHeight) - 100,
-            interval: 400,
-            particleConfig: {
-                particleWidth: 10,
-                particleHeight: 30,
-                particleColor: '#FF00FF',
-                speed: 80
-            }
+var emitterConfig = [
+    {
+        positionY : 0
+    },
+    { 
+        positionX: canvasWidth / 2, 
+        positionY: canvasHeight / 2, 
+        interval: 500 
+    },
+    {
+        positionX: 100,
+        positionY: 100,
+        interval: 300,
+        particleConfig: {
+            particleWidth: 25,
+            particleHeight: 15,
+            particleColor: '#00FF00',
+            speed: 80
         }
-    ]
-};
+    },
+    {
+        positionX: (canvasWidth) - 100,
+        positionY: (canvasHeight) - 100,
+        interval: 400,
+        particleConfig: {
+            particleWidth: 20,
+            particleHeight: 10,
+            particleColor: '#0000FF',
+            speed: 80
+        }
+    },
+    {
+        positionX: (canvasWidth) - 100,
+        positionY: 100,
+        interval: 400,
+        particleConfig: {
+            particleWidth: 15,
+            particleHeight: 5,
+            particleColor: '#FF0000',
+            speed: 80
+        }
+    },
+    {
+        positionX: 100,
+        positionY: (canvasHeight) - 100,
+        interval: 400,
+        particleConfig: {
+            particleWidth: 10,
+            particleHeight: 30,
+            particleColor: '#FF00FF',
+            speed: 80
+        }
+    }
+];
 
 onInitialize(emitterConfig);
 
 requestAnimationFrame(vsyncLoop);
 
-/*
+
 const { createApp, ref } = Vue
 
 createApp({
-    setup() {
+    setup() {/*
         const brickHeight = ref(20)
         const brickWidth = ref(80)//observability, update template dependant on it.
         const ballSize = ref(40)
@@ -258,12 +265,9 @@ createApp({
                 brickWidth : brickWidth.value,
                 ballSize : ballSize.value
             });
-        }
+        }*/
         return {
-            brickHeight,
-            brickWidth,
-            ballSize,
-            submitForm
+
         }
     }
-}).mount('#app')*/
+}).mount('#app')
