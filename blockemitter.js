@@ -242,7 +242,7 @@ var emitterConfig = [
             particleWidth: 10,
             particleHeight: 30,
             particleColor: '#FF00FF',
-            speed: 80
+            particleSpeed: 80
         }
     }
 ];
