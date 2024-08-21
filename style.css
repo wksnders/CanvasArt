@@ -37,3 +37,33 @@ canvas {
 	min-width: 512px;
 	max-width: 512px;
 }
+
+
+
+.form-field label {
+	display: block;
+	text-align: left;
+}
+.form-field button {
+	display: block;
+	text-align: left;
+	background-color: #0008;
+	border: 1px solid #6668;
+    padding: 0 1rem;
+}
+.form-field label span {
+	display: block;
+}
+.form-field label input,
+.form-field label button,
+.form-field label select {
+	display: inline-block;
+	background-color: #0008;
+	border: 1px solid #6668;
+}
+.form-field label input[type="number"] {
+	width: 5rem;
+}
+.form-field label input[type="range"] {
+	width: calc(50% - 10rem);
+}
