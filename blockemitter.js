@@ -138,7 +138,7 @@ var vsyncLoop = function (time) {
 
     var deltaTime = (time-lastTime)/1000; //fractions of a second
     lastTime = time;
-    console.log('vsyncLoop : deltaTime',deltaTime);
+    //console.log('vsyncLoop : deltaTime',deltaTime);
 
     
     //Clear old content
@@ -176,8 +176,9 @@ var createEmitter = function(
     );
 }
 
-var createEmitters = function(configurations = []) {
-    configurations.forEach(config => {
+var createEmitters = function(Emitters = []) {
+    console.log('createEmitters : Emitters',emitters);
+    Emitters.forEach(config => {
         createEmitter(
             config.positionX !== undefined ? config.positionX : canvasWidth / 2, 
             config.positionY !== undefined ? config.positionY : canvasHeight / 2, 
@@ -189,6 +190,7 @@ var createEmitters = function(configurations = []) {
 
 var onInitialize = function(config = []){
     emitters.length = 0;// Empty the array
+    console.log('onInitialize : new config',config);
     createEmitters(config);
 }
 
@@ -239,7 +241,7 @@ var emitterConfig = [
     }
 ];
 
-onInitialize(emitterConfig);
+//onInitialize(emitterConfig);
 
 requestAnimationFrame(vsyncLoop);
 
@@ -277,11 +279,14 @@ createApp({
         function removeEmitter(emitter) {
             emitters.value = emitters.value.filter((t) => t !== emitter);
         }
-        
+        function submitForm() {
+            onInitialize(emitters.value);
+        }
         return {
             emitters,
             addEmitter,
-            removeEmitter
+            removeEmitter,
+            submitForm
         }
     }
 }).mount('#app')

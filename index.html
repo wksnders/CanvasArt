@@ -16,7 +16,9 @@
 
     <!-- form  -->
      <div id="app">
-        <form>
+        <form 
+        @submit.prevent="submitForm"
+        >
             <div class="row">
                 <div class="form-field">
                     <button
@@ -73,13 +75,13 @@
                             <input 
                                 type="number" 
                                 min="5" 
-                                max="100" 
+                                max="1000" 
                                 v-model.number="emitter.interval"
                             >
                             <input 
                                 type="range" 
                                 min="5" 
-                                max="100" 
+                                max="1000" 
                                 v-model.number="emitter.interval"
                             >
                         </label>
@@ -133,23 +135,6 @@
                     </div>
                     <div class="form-field">
                         <label>
-                            <span class="label">particleHeight</span>
-                            <input 
-                                type="number" 
-                                min="5" 
-                                max="100" 
-                                v-model.number="emitter.particleHeight"
-                            >
-                            <input 
-                                type="range" 
-                                min="5" 
-                                max="100" 
-                                v-model.number="emitter.particleHeight"
-                            >
-                        </label>
-                    </div>
-                    <div class="form-field">
-                        <label>
                             <span class="label">particleSpeed</span>
                             <input 
                                 type="number" 
@@ -174,6 +159,10 @@
                         >delete</button>
                     </div>
                 </div>
+            </div>
+            
+            <div>
+                <input type="submit" value="start emitters">
             </div>
         </form>
     </div>
