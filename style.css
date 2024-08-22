@@ -27,6 +27,7 @@ body {
 }
 canvas {
     border: 1px solid #333;
+	margin-bottom: 1rem;
 }
 .container {
     text-align: center;
@@ -39,31 +40,160 @@ canvas {
 }
 
 
+.secondary-text { font-size: 10px; }
+.body-text { font-size: 12px; }
+.subheader-text { font-size: 16px; }
+.header-text { font-size: 20px; }
+
+@media screen and (min-width: 480px) {
+    .secondary-text { font-size: 12px; }
+    .body-text { font-size: 14px; }
+    .subheader-text { font-size: 18px; }
+    .header-text { font-size: 24px; }
+}
+
+@media screen and (min-width: 770px) {
+    .secondary-text { font-size: 14px; }
+    .body-text { font-size: 16px; }
+    .subheader-text { font-size: 20px; }
+    .header-text { font-size: 28px; }
+}
+
+@media screen and (min-width: 1025px) {
+    .secondary-text { font-size: 16px; }
+    .body-text { font-size: 18px; }
+    .subheader-text { font-size: 22px; }
+    .header-text { font-size: 32px; }
+}
+
+
+
+
+
+
+
+
+
+
+
+form {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    align-items: center;
+}
+.form-field {
+    flex: 1;
+    min-width: 250px;
+    margin-right: 10px;
+}
+.emitter-container{
+	border-top: 1px solid #444; /* Bottom border to separate each emitter */
+	padding-top: 15px;
+    margin-top: 15px;
+}
+
+.form-field button  {
+    display: inline-block;
+    text-align: center;
+    background-color: #333;
+    border: 1px solid #666;
+    padding: 0.5rem 1.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.form-field button:hover {
+	background-color: #555;
+}
+
+.form-field button:active {
+	background-color: #777;
+}
+.add-emitter-button {
+    display: block;
+    margin: 0 auto;
+	width: 100%;
+}
+
 
 .form-field label {
-	display: block;
-	text-align: left;
-}
-.form-field button {
-	display: block;
-	text-align: left;
-	background-color: #0008;
-	border: 1px solid #6668;
-    padding: 0 1rem;
+    display: block;
+    text-align: left;
 }
 .form-field label span {
-	display: block;
+    display: block;
 }
 .form-field label input,
 .form-field label button,
 .form-field label select {
-	display: inline-block;
-	background-color: #0008;
-	border: 1px solid #6668;
+    display: inline-block;
+    background-color: #0008;
+    border: 1px solid #6668;
+    color: #fff;
+    padding: 2px 5px;
+    margin-top: 5px;
 }
 .form-field label input[type="number"] {
-	width: 5rem;
+    width: 5rem;
 }
 .form-field label input[type="range"] {
-	width: calc(50% - 10rem);
+    width: calc(100% - 6rem); /* Adjusted width to avoid overflow */
+    cursor: pointer;
 }
+.form-field label input[type="color"] {
+	padding: 0; 
+    border: none; 
+    margin-top: 5px; 
+}
+
+h3 {
+	white-space: nowrap;
+    color: #f0f0f0;
+    margin: 0;
+	flex: 1;
+}
+.row h3 {
+    margin-right: auto; /* Ensure the h3 takes up the remaining space */
+}
+
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: #fff;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+	background-color: #218838;
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+    .form-field button {
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .form-field button:hover {
+        transform: scale(1.05);
+    }
+
+    .form-field button:active {
+        transform: scale(0.95);
+    }
+
+    input[type="submit"] {
+        transition: background-color 0.3s ease;
+    }
+}
+

@@ -20,19 +20,29 @@
         @submit.prevent="submitForm"
         >
             <div class="row">
-                <div class="form-field">
+                <div class="form-field subheader-text">
                     <button
+                        class="add-emitter-button"
                         type="button"
                         @click="addEmitter()"
-                    >add</button>
+                    >Add new Emitter</button>
                 </div>
             </div>
             <div 
+            class="emitter-container"
             v-for="emitter in emitters"
             :key = emitter.id
-            >
-                <h3>Emitter Configuration</h3>
+            > 
                 <div class="row">
+                    <h3 class="header-text">Emitter Configuration</h3>
+                    <div class="form-field subheader-text">
+                        <button
+                            type="button"
+                            @click="removeEmitter(emitter)"
+                        >delete</button>
+                    </div>
+                </div>
+                <div class="row body-text">
                     <div class="form-field">
                         <label>
                             <span class="label">pos x</span>
@@ -68,7 +78,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row body-text">
                     <div class="form-field">
                         <label>
                             <span class="label">interval</span>
@@ -87,7 +97,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row body-text">
                     <div class="form-field">
                         <label>
                             <span class="label">particleWidth</span>
@@ -123,7 +133,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row body-text">
                     <div class="form-field">
                         <label>
                             <span class="label">particleColor</span>
@@ -151,18 +161,11 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-field">
-                        <button
-                            type="button"
-                            @click="removeEmitter(emitter)"
-                        >delete</button>
-                    </div>
-                </div>
             </div>
-            
-            <div>
-                <input type="submit" value="start emitters">
+            <div class="row">
+                <div class="form-field header-text ">
+                    <input type="submit" value="start emitters">
+                </div>
             </div>
         </form>
     </div>
