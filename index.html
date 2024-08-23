@@ -49,13 +49,13 @@
                             <input 
                                 type="number" 
                                 min="0" 
-                                max="512" 
+                                :max="canvasWidth" 
                                 v-model.number="emitter.positionX"
                             >
                             <input 
                                 type="range" 
                                 min="0" 
-                                max="512" 
+                                :max="canvasWidth" 
                                 v-model.number="emitter.positionX"
                             >
                         </label>
@@ -65,14 +65,14 @@
                             <span class="label">pos y</span>
                             <input 
                                 type="number" 
-                                min="5" 
-                                max="384" 
+                                min="0" 
+                                :max="canvasHeight" 
                                 v-model.number="emitter.positionY"
                             >
                             <input 
                                 type="range" 
-                                min="5" 
-                                max="384" 
+                                min="0" 
+                                :max="canvasHeight" 
                                 v-model.number="emitter.positionY"
                             >
                         </label>

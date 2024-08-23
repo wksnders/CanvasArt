@@ -1,8 +1,12 @@
+
+const { createApp , ref , onMounted , onUnmounted } = Vue
+
 const tao = 2 * Math.PI;
 
 //set up canvas
 var canvas = document.getElementById('display-canvas'); 
-var {width: canvasWidth, height: canvasHeight} = canvas;
+var canvasWidth = ref(canvas.width);
+var canvasHeight = ref(canvas.height);
 var context = canvas.getContext('2d');
 
 var isAnimationActive = true;
@@ -83,7 +87,7 @@ class Emitter {
             rotationSpeed
         );
 
-        console.log('Emitter emit : emitterX', this.emitterX, 'emitterY', this.emitterY);
+        console.info('Emitter emit : emitterX', this.emitterX, 'emitterY', this.emitterY);
 
         this.sprites.push(newSprite);
     }
@@ -93,8 +97,8 @@ class Emitter {
             sprite.update(deltaTime);
         });
         this.sprites = this.sprites.filter(sprite => {
-            return sprite.positionX > 0 && sprite.positionX < canvasWidth &&
-                   sprite.positionY > 0 && sprite.positionY < canvasHeight;
+            return sprite.positionX > 0 && sprite.positionX < canvasWidth.value &&
+                   sprite.positionY > 0 && sprite.positionY < canvasHeight.value;
         });
     }
 }
@@ -143,7 +147,7 @@ var vsyncLoop = function (time) {
     
     //Clear old content
     context.fillStyle = '#000';
-    context.fillRect(0, 0, canvasWidth, canvasHeight);
+    context.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
 
     emitters.forEach(emitter => {
         emitter.sprites.forEach(sprite => {
@@ -156,8 +160,8 @@ var vsyncLoop = function (time) {
 }
 
 var createEmitter = function(
-    positionX = canvasWidth / 2,
-    positionY = canvasHeight / 2,
+    positionX = canvasWidth.value / 2,
+    positionY = canvasHeight.value / 2,
     interval = 500,
     particleConfig = {}
 ){
@@ -180,8 +184,8 @@ var createEmitters = function(Emitters = []) {
     console.log('createEmitters : Emitters',emitters);
     Emitters.forEach(config => {
         createEmitter(
-            config.positionX !== undefined ? config.positionX : canvasWidth / 2, 
-            config.positionY !== undefined ? config.positionY : canvasHeight / 2, 
+            config.positionX !== undefined ? config.positionX : canvasWidth.value / 2, 
+            config.positionY !== undefined ? config.positionY : canvasHeight.value / 2, 
             config.interval || 500,
             config
         );
@@ -194,64 +198,27 @@ var onInitialize = function(config = []){
     createEmitters(config);
 }
 
-var emitterConfig = [
-    {
-        positionY : 0
-    },
-    { 
-        positionX: canvasWidth / 2, 
-        positionY: canvasHeight / 2, 
-        interval: 500 
-    },
-    {
-        positionX: 100,
-        positionY: 100,
-        interval: 300,
-        particleWidth: 25,
-        particleHeight: 15,
-        particleColor: '#00FF00',
-        particleSpeed: 80
-    },
-    {
-        positionX: (canvasWidth) - 100,
-        positionY: (canvasHeight) - 100,
-        interval: 400,
-        particleWidth: 20,
-        particleHeight: 10,
-        particleColor: '#0000FF',
-        particleSpeed: 80
-    },
-    {
-        positionX: (canvasWidth) - 100,
-        positionY: 100,
-        interval: 400,
-        particleWidth: 15,
-        particleHeight: 5,
-        particleColor: '#FF0000',
-        particleSpeed: 80
-    },
-    {
-        positionX: 100,
-        positionY: (canvasHeight) - 100,
-        interval: 400,
-        particleWidth: 10,
-        particleHeight: 30,
-        particleColor: '#FF00FF',
-        particleSpeed: 80
-    }
-];
 
 //onInitialize(emitterConfig);
 
 requestAnimationFrame(vsyncLoop);
 
 
-const { createApp, ref } = Vue
 
 createApp({
     setup() {
         let id = 0;
         const emitters = ref([
+            {
+                id: id++,
+                positionY : 0
+            },
+            { 
+                id: id++,
+                positionX: canvasWidth.value / 2, 
+                positionY: canvasHeight.value / 2, 
+                interval: 500 
+            },
             {
                 id: id++,
                 positionX: 100,
@@ -261,8 +228,55 @@ createApp({
                 particleHeight: 15,
                 particleColor: '#00FF00',
                 particleSpeed: 80
+            },
+            {
+                id: id++,
+                positionX: (canvasWidth.value) - 100,
+                positionY: (canvasHeight.value) - 100,
+                interval: 400,
+                particleWidth: 20,
+                particleHeight: 10,
+                particleColor: '#0000FF',
+                particleSpeed: 80
+            },
+            {
+                id: id++,
+                positionX: (canvasWidth.value) - 100,
+                positionY: 100,
+                interval: 400,
+                particleWidth: 15,
+                particleHeight: 5,
+                particleColor: '#FF0000',
+                particleSpeed: 80
+            },
+            {
+                id: id++,
+                positionX: 100,
+                positionY: (canvasHeight.value) - 100,
+                interval: 400,
+                particleWidth: 10,
+                particleHeight: 30,
+                particleColor: '#FF00FF',
+                particleSpeed: 80
             }
         ]);
+        onMounted(()=> {
+            window.addEventListener("resize", handleResize);
+            handleResize();
+        });
+        onUnmounted(()=> {
+            window.removeEventListener("resize", handleResize);
+        });
+
+        var handleResize = function(){
+            console.log('handleResize : resized width',document.documentElement.clientWidth);
+            var containerWidth = document.querySelector('.container').clientWidth;
+            var canvas = document.querySelector('#display-canvas');
+            canvasWidth.value  = containerWidth * 0.8;
+            canvas.width = canvasWidth.value;
+            canvasHeight.value = containerWidth * 0.6;
+            canvas.height = canvasHeight.value;
+        }
         function addEmitter() {
             emitters.value.push({ 
                 id: id++,
@@ -282,11 +296,14 @@ createApp({
         function submitForm() {
             onInitialize(emitters.value);
         }
-        return {
+        return {//html is allowed to know about
+            canvasHeight,
+            canvasWidth,
             emitters,
             addEmitter,
             removeEmitter,
-            submitForm
+            submitForm,
+            handleResize
         }
     }
 }).mount('#app')
