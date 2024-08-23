@@ -10,7 +10,65 @@ var canvasHeight = ref(canvas.height);
 var context = canvas.getContext('2d');
 
 var isAnimationActive = true;
-var emitters = [];
+var sprites = [];
+let emitterId = 0;
+const emitters = ref([
+    { 
+        id: emitterId++,
+        positionX: canvasWidth.value / 2, 
+        positionY: canvasHeight.value / 2, 
+        interval: 500 ,
+        timeTillNextParticle:100,
+        particleWidth: 25,
+        particleHeight: 15,
+        particleColor: '#00FF00',
+        particleSpeed: 80
+    },
+    {
+        id: emitterId++,
+        positionX: 100,
+        positionY: 100,
+        interval: 300,
+        timeTillNextParticle:100,
+        particleWidth: 25,
+        particleHeight: 15,
+        particleColor: '#00FF00',
+        particleSpeed: 80
+    },
+    {
+        id: emitterId++,
+        positionX: (canvasWidth.value) - 100,
+        positionY: (canvasHeight.value) - 100,
+        interval: 400,
+        timeTillNextParticle:100,
+        particleWidth: 20,
+        particleHeight: 10,
+        particleColor: '#0000FF',
+        particleSpeed: 80
+    },
+    {
+        id: emitterId++,
+        positionX: (canvasWidth.value) - 100,
+        positionY: 100,
+        interval: 400,
+        timeTillNextParticle:100,
+        particleWidth: 15,
+        particleHeight: 5,
+        particleColor: '#FF0000',
+        particleSpeed: 80
+    },
+    {
+        id: emitterId++,
+        positionX: 100,
+        positionY: (canvasHeight.value) - 100,
+        interval: 400,
+        timeTillNextParticle:100,
+        particleWidth: 10,
+        particleHeight: 30,
+        particleColor: '#FF00FF',
+        particleSpeed: 80
+    }
+]);
 
 //represents a sprite to be rendered on screen
 class Sprite {
@@ -55,13 +113,9 @@ class Sprite {
 }
 
 class Emitter {
-    constructor(emitterX, emitterY) {
-        this.emitterX = emitterX;
-        this.emitterY = emitterY;
-        this.sprites = [];
-    }
-
-    emit(
+    static emit(
+        emitterX,
+        emitterY,
         particleWidth = 40,
         particleHeight = 20,
         particleColor = '#FFF',
@@ -75,31 +129,45 @@ class Emitter {
 
         // Create a new sprite with velocity
         const newSprite = new Sprite(
-            this.sprites.length, // TODO: Implement a new ID system
+            sprites.length, // TODO: Implement a new ID system
             particleWidth,
             particleHeight,
             particleColor,
-            this.emitterX,
-            this.emitterY,
+            emitterX,
+            emitterY,
             angle,
             velocityX,
             velocityY,
             rotationSpeed
         );
 
-        console.info('Emitter emit : emitterX', this.emitterX, 'emitterY', this.emitterY);
+        console.info('Emitter emit : emitterX', emitterX, 'emitterY', emitterY);
 
-        this.sprites.push(newSprite);
+        sprites.push(newSprite);
     }
 
-    update(deltaTime) {
-        this.sprites.forEach(sprite => {
-            sprite.update(deltaTime);
-        });
-        this.sprites = this.sprites.filter(sprite => {
-            return sprite.positionX > 0 && sprite.positionX < canvasWidth.value &&
-                   sprite.positionY > 0 && sprite.positionY < canvasHeight.value;
-        });
+    static update(emitter,deltaTime) {
+        var {timeTillNextParticle,
+            positionX,
+            positionY,
+            interval,
+            particleWidth,
+            particleHeight,
+            particleColor,
+            particleSpeed
+        } = emitter;
+        if(timeTillNextParticle <= 0){
+            Emitter.emit(
+                positionX,
+                positionY,
+                particleWidth,
+                particleHeight,
+                particleColor,
+                particleSpeed
+            );
+            emitter.timeTillNextParticle = interval;
+        }
+        emitter.timeTillNextParticle --;
     }
 }
 
@@ -110,9 +178,20 @@ var onUpdate = function(deltaTime){
         return;
     }
 
-    emitters.forEach(element => {
-        element.update(deltaTime);
+    emitters.value.forEach(emitter => {
+        Emitter.update(emitter,deltaTime);
     });
+    //TODO move emmiters to be on screen if not on screen
+
+    sprites.forEach(sprite => {
+        sprite.update(deltaTime);
+    });
+    //remove offscreen sprites
+    sprites = sprites.filter(sprite => {
+        return sprite.positionX > 0 && sprite.positionX < canvasWidth.value &&
+               sprite.positionY > 0 && sprite.positionY < canvasHeight.value;
+    });
+
 }
 
 var drawBoxSprite = function(sprite){
@@ -148,118 +227,18 @@ var vsyncLoop = function (time) {
     //Clear old content
     context.fillStyle = '#000';
     context.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
-
-    emitters.forEach(emitter => {
-        emitter.sprites.forEach(sprite => {
-            drawBoxSprite(sprite);
-        });
+    sprites.forEach(sprite => {
+        drawBoxSprite(sprite);
     });
 
 
     onUpdate(deltaTime);
 }
 
-var createEmitter = function(
-    positionX = canvasWidth.value / 2,
-    positionY = canvasHeight.value / 2,
-    interval = 500,
-    particleConfig = {}
-){
-    var emitter = new Emitter(positionX,positionY);
-    emitters.push(emitter);
-    setInterval(
-        () => {
-            emitter.emit(
-                particleWidth = particleConfig.particleWidth || 40,
-                particleHeight = particleConfig.particleHeight || 20,
-                particleColor = particleConfig.particleColor || '#FFF',
-                particleSpeed = particleConfig.particleSpeed || 100
-            );
-        }, 
-        interval
-    );
-}
-
-var createEmitters = function(Emitters = []) {
-    console.log('createEmitters : Emitters',emitters);
-    Emitters.forEach(config => {
-        createEmitter(
-            config.positionX !== undefined ? config.positionX : canvasWidth.value / 2, 
-            config.positionY !== undefined ? config.positionY : canvasHeight.value / 2, 
-            config.interval || 500,
-            config
-        );
-    });
-}
-
-var onInitialize = function(config = []){
-    emitters.length = 0;// Empty the array
-    console.log('onInitialize : new config',config);
-    createEmitters(config);
-}
-
-
-//onInitialize(emitterConfig);
-
 requestAnimationFrame(vsyncLoop);
-
-
 
 createApp({
     setup() {
-        let id = 0;
-        const emitters = ref([
-            {
-                id: id++,
-                positionY : 0
-            },
-            { 
-                id: id++,
-                positionX: canvasWidth.value / 2, 
-                positionY: canvasHeight.value / 2, 
-                interval: 500 
-            },
-            {
-                id: id++,
-                positionX: 100,
-                positionY: 100,
-                interval: 300,
-                particleWidth: 25,
-                particleHeight: 15,
-                particleColor: '#00FF00',
-                particleSpeed: 80
-            },
-            {
-                id: id++,
-                positionX: (canvasWidth.value) - 100,
-                positionY: (canvasHeight.value) - 100,
-                interval: 400,
-                particleWidth: 20,
-                particleHeight: 10,
-                particleColor: '#0000FF',
-                particleSpeed: 80
-            },
-            {
-                id: id++,
-                positionX: (canvasWidth.value) - 100,
-                positionY: 100,
-                interval: 400,
-                particleWidth: 15,
-                particleHeight: 5,
-                particleColor: '#FF0000',
-                particleSpeed: 80
-            },
-            {
-                id: id++,
-                positionX: 100,
-                positionY: (canvasHeight.value) - 100,
-                interval: 400,
-                particleWidth: 10,
-                particleHeight: 30,
-                particleColor: '#FF00FF',
-                particleSpeed: 80
-            }
-        ]);
         onMounted(()=> {
             window.addEventListener("resize", handleResize);
             handleResize();
@@ -276,13 +255,15 @@ createApp({
             canvas.width = canvasWidth.value;
             canvasHeight.value = containerWidth * 0.6;
             canvas.height = canvasHeight.value;
+            //todo loop through emitters and update max xand y pos
         }
         function addEmitter() {
             emitters.value.push({ 
-                id: id++,
+                id: emitterId++,
                 positionX:  100,
                 positionY: 100,
                 interval: 300,
+                timeTillNextParticle:100,
                 particleWidth: 25,
                 particleHeight: 15,
                 particleColor: '#00FF00',
