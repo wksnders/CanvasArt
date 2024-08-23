@@ -270,7 +270,6 @@ createApp({
                 particleSpeed: 80
             });
         }
-      
         function removeEmitter(emitter) {
             emitters.value = emitters.value.filter((t) => t !== emitter);
         }
