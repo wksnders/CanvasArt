@@ -75,22 +75,24 @@ class Sprite {
     constructor(id,width,height,color = '#FFF', positionX = 0, positionY = 0,rotation = 0, velocityX = 0, velocityY = 0,angVel = 0) {
         this.id = id;
         this.active = true;
-        this.positionX = positionX;
-        this.positionY = positionY;
+        this.position = glMatrix.vec2.create();
+        glMatrix.vec2.set(this.position,positionX,positionY);
         this.rotation = rotation;
         this.width = width;
         this.height = height;
-        this.velocityX = velocityX;
-        this.velocityY = velocityY;
+        this.velocity = glMatrix.vec2.create();
+        glMatrix.vec2.set(this.velocity,velocityX,velocityY);
         this.angVel = angVel;
         this.color = color;
     }
     setActive(active){
         this.active = active;
     }
-    setPosition(x,y){
-        this.positionX = x;
-        this.positionY = y;
+    setPosition(position){
+        glMatrix.vec2.copy(this.position,position);
+    }
+    setVelocity(velocityX,velocityY){
+        glMatrix.vec2.set(this.velocity,velocityX,velocityY);
     }
     setRotation(rotation){
         this.rotation = rotation;
@@ -100,9 +102,12 @@ class Sprite {
         this.width = width;
     }
     update(deltaTime){
-        this.setPosition(
-            this.positionX + (deltaTime * this.velocityX),
-            this.positionY + (deltaTime * this.velocityY)
+        var scaledVelocity = glMatrix.vec2.create();
+        glMatrix.vec2.scale(scaledVelocity,this.velocity,deltaTime);
+        glMatrix.vec2.add(
+            this.position,
+            this.position,
+            scaledVelocity
         );
         if(this.angVel != 0){
             this.setRotation(
@@ -188,8 +193,8 @@ var onUpdate = function(deltaTime){
     });
     //remove offscreen sprites
     sprites = sprites.filter(sprite => {
-        return sprite.positionX > 0 && sprite.positionX < canvasWidth.value &&
-               sprite.positionY > 0 && sprite.positionY < canvasHeight.value;
+        return sprite.position[0] > 0 && sprite.position[0] < canvasWidth.value &&
+               sprite.position[1] > 0 && sprite.position[1] < canvasHeight.value;
     });
 
 }
@@ -199,7 +204,7 @@ var drawBoxSprite = function(sprite){
         return;
     }
     context.save();
-    context.translate(sprite.positionX, sprite.positionY);
+    context.translate(sprite.position[0], sprite.position[1]);
     context.rotate(sprite.rotation - (tao/4));//start rotation from the positive y axis
     context.fillStyle = sprite.color;
     context.fillRect(
