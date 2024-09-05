@@ -11,6 +11,7 @@ var context = canvas.getContext('2d');
 
 var isAnimationActive = true;
 var sprites = [];
+var Boids = [];
 let emitterId = 0;
 const emitters = ref([
     { 
@@ -176,6 +177,52 @@ class Emitter {
     }
 }
 
+class Boid{
+    //maxSpeed
+    //minSpeed
+
+    getNeighbors(){
+
+    }
+
+    isInProtectedRange(boid,otherSprite,boidSeperationRange){
+        //TODO make a better distance calc that accounts for sprite size
+        var dist = glMatrix.vec2.dist(boid.position,otherSprite.position);
+        return dist < boidSeperationRange;
+    }
+
+    seperation(avoidFactor,boidSeperationRange){
+
+        Boids.forEach((boid) => {
+            var avoidVector = glMatrix.vec2.create();
+
+            sprites.filter(
+                (sprite) => Boid.isInProtectedRange(
+                    boid,
+                    sprite, 
+                    boidSeperationRange
+                )
+            ).forEach((tooCloseSprites) => {
+                avoidVector[0] += boid.position[0] - tooCloseSprites.position[0];
+                avoidVector[1] += boid.position[1] - tooCloseSprites.position[1];
+            });
+
+            glMatrix.vec2.scale(avoidVector,avoidFactor,avoidVector);
+            glMatrix.vec2.add(boid.position,boid.position,avoidVector);
+        });
+    }
+    Alignment(){
+        //visible range
+        
+    }
+    Cohesion(){
+        //
+
+    }
+    screenWrap(){
+        //mirror and wrap screen
+    }
+}
 
 
 var onUpdate = function(deltaTime){
