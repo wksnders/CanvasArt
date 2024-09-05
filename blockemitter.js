@@ -9,9 +9,19 @@ var canvasWidth = ref(canvas.width);
 var canvasHeight = ref(canvas.height);
 var context = canvas.getContext('2d');
 
+var boidProperties = ref({
+    visualRange: 400,
+    protectedRange: 80,
+    centeringFactor: 0.0005,
+    avoidFactor: 0.05,
+    matchingFactor: 0.05,
+    maxSpeed: 120,
+    minSpeed: 60,
+});
+
 var isAnimationActive = true;
 var sprites = [];
-var Boids = [];
+var boids = [];
 let emitterId = 0;
 const emitters = ref([
     { 
@@ -76,13 +86,11 @@ class Sprite {
     constructor(id,width,height,color = '#FFF', positionX = 0, positionY = 0,rotation = 0, velocityX = 0, velocityY = 0,angVel = 0) {
         this.id = id;
         this.active = true;
-        this.position = glMatrix.vec2.create();
-        glMatrix.vec2.set(this.position,positionX,positionY);
+        this.position = glMatrix.vec2.fromValues(positionX,positionY);
         this.rotation = rotation;
         this.width = width;
         this.height = height;
-        this.velocity = glMatrix.vec2.create();
-        glMatrix.vec2.set(this.velocity,velocityX,velocityY);
+        this.velocity = glMatrix.vec2.fromValues(velocityX,velocityY);
         this.angVel = angVel;
         this.color = color;
     }
@@ -118,6 +126,8 @@ class Sprite {
     }
 }
 
+
+
 class Emitter {
     static emit(
         emitterX,
@@ -150,6 +160,8 @@ class Emitter {
         console.info('Emitter emit : emitterX', emitterX, 'emitterY', emitterY);
 
         sprites.push(newSprite);
+        console.info('Emitter emit : sprites.len', sprites.length);
+
     }
 
     static update(emitter,deltaTime) {
@@ -181,19 +193,19 @@ class Boid{
     //maxSpeed
     //minSpeed
 
-    isInRange(boid,otherSprite,Range){
+    static isInRange(boid,otherSprite,Range){
         //TODO make a better distance calc that accounts for sprite size
         var dist = glMatrix.vec2.dist(boid.position,otherSprite.position);
         return dist < Range;
     }
 
-    seperation(boids, sprites, avoidFactor,boidSeperationRange){
+    static seperation(boids, sprites, avoidFactor,boidSeperationRange){
 
         boids.forEach((boid) => {
             var avoidVector = glMatrix.vec2.create();
 
             sprites.filter(
-                (sprite) => Boid.isInProtectedRange(
+                (sprite) => Boid.isInRange(
                     boid,
                     sprite, 
                     boidSeperationRange
@@ -203,18 +215,17 @@ class Boid{
                 avoidVector[1] += boid.position[1] - tooCloseSprites.position[1];
             });
 
-            glMatrix.vec2.scale(avoidVector,avoidFactor,avoidVector);
-            glMatrix.vec2.add(boid.position,boid.position,avoidVector);
+            glMatrix.vec2.scaleAndAdd(boid.velocity,boid.velocity,avoidVector,avoidFactor);
         });
     }
-    Alignment(boids,visibleRange,matchingFactor){
+    static alignment(boids,visibleRange,matchingFactor){
         //TODO restrict to visible range
         boids.forEach((boid) => {
             var numVisibleBoids = 0;
             var alignVector = glMatrix.vec2.create();
 
             boids.filter((otherBoid) => {
-                isInRange(
+                Boid.isInRange(
                     boid,
                     otherBoid,
                     visibleRange
@@ -224,7 +235,7 @@ class Boid{
                 alignVector[0] += visibleBoid.velocity[0];
                 alignVector[1] += visibleBoid.velocity[1];
             });
-            var avgVelocity;
+            var avgVelocity = glMatrix.vec2.create();
             if(numVisibleBoids > 0){
                 glMatrix.vec2.scale(
                     avgVelocity,
@@ -233,27 +244,26 @@ class Boid{
                 );
             }
 
-            var combinedVelocity
+            var combinedVelocity = glMatrix.vec2.create();
             glMatrix.vec2.sub(
                 combinedVelocity,
                 avgVelocity,
                 boid.velocity
             );
 
-            glMatrix.vec2.scale(alignVector,matchingFactor,combinedVelocity);
-            glMatrix.vec2.add(boid.velocity,boid.velocity,alignVector);
+            glMatrix.vec2.scaleAndAdd(boid.velocity,boid.velocity,combinedVelocity,matchingFactor);
             
         });
         
         
     }
-    Cohesion(boids,visibleRange,centeringFactor){
+    static cohesion(boids,visibleRange,centeringFactor){
         boids.forEach((boid) => {
             var numVisibleBoids = 0;
             var cohesionVector = glMatrix.vec2.create();
 
             boids.filter((otherBoid) => {
-                isInRange(
+                Boid.isInRange(
                     boid,
                     otherBoid,
                     visibleRange
@@ -263,7 +273,7 @@ class Boid{
                 cohesionVector[0] += visibleBoid.position[0];
                 cohesionVector[1] += visibleBoid.position[1];
             });
-            var avgPosition;
+            var avgPosition = glMatrix.vec2.create();
             if(numVisibleBoids > 0){
                 glMatrix.vec2.scale(
                     avgPosition,
@@ -272,20 +282,19 @@ class Boid{
                 );
             }
 
-            var combinedPosition
+            var combinedPosition = glMatrix.vec2.create();
             glMatrix.vec2.sub(
                 combinedPosition,
                 avgPosition,
-                boid.velocity
+                boid.position
             );
 
-            glMatrix.vec2.scale(cohesionVector,centeringFactor,combinedPosition);
-            glMatrix.vec2.add(boid.velocity,boid.velocity,cohesionVector);
+            glMatrix.vec2.scaleAndAdd(boid.velocity,boid.velocity,combinedPosition,centeringFactor);
             
         });
 
     }
-    screenWrapAndMirror(boid){
+    static screenWrapAndMirror(boid){
         if (boid.position[0] < 0) {
             boid.position[0] = canvasWidth.value - 1; 
             boid.position[1] = canvasHeight.value - boid.position[1];
@@ -303,11 +312,96 @@ class Boid{
         } 
     }
 
-    speedLimits(){
-
+    static speedLimits(boid,maxSpeed,minSpeed){
+        var speed = glMatrix.vec2.len(boid.velocity);
+        if(speed > maxSpeed){
+            glMatrix.vec2.scale(
+                boid.velocity,
+                boid.velocity,
+                maxSpeed/speed
+            );
+        }
+        else if(speed < minSpeed){
+            glMatrix.vec2.scale(
+                boid.velocity,
+                boid.velocity,
+                minSpeed/speed
+            );
+        }
     }
 }
 
+//TODO delete this
+const newboid = new Sprite(
+    sprites.length, // TODO: Implement a new ID system
+    15,
+    15,
+    '#228822',
+    canvasWidth.value/2,
+    canvasHeight.value/2,
+    0,
+    20,
+    0,
+    0
+);
+sprites.push(newboid);
+boids.push(newboid);
+const newboid2 = new Sprite(
+    sprites.length, // TODO: Implement a new ID system
+    15,
+    15,
+    '#228822',
+    canvasWidth.value/2 - 50,
+    canvasHeight.value/2,
+    0,
+    20,
+    0,
+    0
+);
+sprites.push(newboid2);
+boids.push(newboid2);
+const newboid3 = new Sprite(
+    sprites.length, // TODO: Implement a new ID system
+    15,
+    15,
+    '#228822',
+    canvasWidth.value/2 + 50,
+    canvasHeight.value/2,
+    0,
+    20,
+    0,
+    0
+);
+sprites.push(newboid3);
+boids.push(newboid3);
+const newboid4 = new Sprite(
+    sprites.length, // TODO: Implement a new ID system
+    15,
+    15,
+    '#228822',
+    canvasWidth.value/2,
+    canvasHeight.value/2 - 50,
+    0,
+    20,
+    0,
+    0
+);
+sprites.push(newboid4);
+boids.push(newboid4);
+const newboid5 = new Sprite(
+    sprites.length, // TODO: Implement a new ID system
+    15,
+    15,
+    '#228822',
+    canvasWidth.value/2,
+    canvasHeight.value/2+ 50,
+    0,
+    20,
+    0,
+    0
+);
+sprites.push(newboid5);
+boids.push(newboid5);
 
 var onUpdate = function(deltaTime){
     if(!isAnimationActive){
@@ -323,7 +417,30 @@ var onUpdate = function(deltaTime){
         sprite.update(deltaTime);
     });
     //screen wrap on boids
-    boids.forEach(Boids.screenWrap)
+    Boid.seperation(
+        boids,
+        sprites,
+        boidProperties.value.avoidFactor,
+        boidProperties.value.protectedRange
+    );
+    Boid.alignment(
+        boids,
+        boidProperties.value.visualRange,
+        boidProperties.value.matchingFactor
+    );
+    Boid.cohesion(
+        boids,
+        boidProperties.value.visualRange,
+        boidProperties.value.centeringFactor
+    );
+    boids.forEach((boid)=>{
+        Boid.speedLimits(
+            boid,
+            boidProperties.value.maxSpeed,
+            boidProperties.value.minSpeed
+        );
+    });
+    boids.forEach(Boid.screenWrapAndMirror);
     //remove offscreen sprites
     sprites = sprites.filter(sprite => {
         return sprite.position[0] > 0 && sprite.position[0] < canvasWidth.value &&
