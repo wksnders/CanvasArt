@@ -331,78 +331,6 @@ class Boid{
     }
 }
 
-//TODO delete this
-const newboid = new Sprite(
-    sprites.length, // TODO: Implement a new ID system
-    15,
-    15,
-    '#228822',
-    canvasWidth.value/2,
-    canvasHeight.value/2,
-    0,
-    20,
-    0,
-    0
-);
-sprites.push(newboid);
-boids.push(newboid);
-const newboid2 = new Sprite(
-    sprites.length, // TODO: Implement a new ID system
-    15,
-    15,
-    '#228822',
-    canvasWidth.value/2 - 50,
-    canvasHeight.value/2,
-    0,
-    20,
-    0,
-    0
-);
-sprites.push(newboid2);
-boids.push(newboid2);
-const newboid3 = new Sprite(
-    sprites.length, // TODO: Implement a new ID system
-    15,
-    15,
-    '#228822',
-    canvasWidth.value/2 + 50,
-    canvasHeight.value/2,
-    0,
-    20,
-    0,
-    0
-);
-sprites.push(newboid3);
-boids.push(newboid3);
-const newboid4 = new Sprite(
-    sprites.length, // TODO: Implement a new ID system
-    15,
-    15,
-    '#228822',
-    canvasWidth.value/2,
-    canvasHeight.value/2 - 50,
-    0,
-    20,
-    0,
-    0
-);
-sprites.push(newboid4);
-boids.push(newboid4);
-const newboid5 = new Sprite(
-    sprites.length, // TODO: Implement a new ID system
-    15,
-    15,
-    '#228822',
-    canvasWidth.value/2,
-    canvasHeight.value/2+ 50,
-    0,
-    20,
-    0,
-    0
-);
-sprites.push(newboid5);
-boids.push(newboid5);
-
 var onUpdate = function(deltaTime){
     if(!isAnimationActive){
         return;
@@ -525,6 +453,22 @@ createApp({
                 particleSpeed: 80
             });
         }
+        function addBoid(){
+            const newboid = new Sprite(
+                sprites.length, // TODO: Implement a new ID system
+                15,
+                15,
+                '#228822',
+                canvasWidth.value/2,
+                canvasHeight.value/2,
+                0,
+                30,
+                0,
+                0
+            );
+            sprites.push(newboid);
+            boids.push(newboid);
+        }
         function removeEmitter(emitter) {
             emitters.value = emitters.value.filter((t) => t !== emitter);
         }
@@ -532,6 +476,8 @@ createApp({
             onInitialize(emitters.value);
         }
         return {//html is allowed to know about
+            addBoid,
+            boidProperties,
             canvasHeight,
             canvasWidth,
             emitters,

@@ -19,6 +19,51 @@
         <form 
         @submit.prevent="submitForm"
         >
+        <div class="row body-text">
+            <div class="form-field">
+                <label>
+                    <span class="label">Visual Range</span>
+                    <input 
+                        type="number" 
+                        min="10" 
+                        :max="canvasWidth" 
+                        v-model.number="boidProperties.visualRange"
+                    >
+                    <input 
+                        type="range" 
+                        min="10" 
+                        :max="canvasWidth" 
+                        v-model.number="boidProperties.visualRange"
+                    >
+                </label>
+            </div>
+            <div class="form-field">
+                <label>
+                    <span class="label">Protected Range</span>
+                    <input 
+                        type="number" 
+                        min="0" 
+                        :max="boidProperties.visualRange" 
+                        v-model.number="boidProperties.protectedRange"
+                    >
+                    <input 
+                        type="range" 
+                        min="0" 
+                        :max="boidProperties.visualRange" 
+                        v-model.number="boidProperties.protectedRange"
+                    >
+                </label>
+            </div>
+        </div>
+            <div class="row">
+                <div class="form-field subheader-text">
+                    <button
+                        class="add-boid-button"
+                        type="button"
+                        @click="addBoid()"
+                    >Add new Boid</button>
+                </div>
+            </div>
             <div class="row">
                 <div class="form-field subheader-text">
                     <button
