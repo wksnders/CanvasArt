@@ -17,6 +17,9 @@ var boidProperties = ref({
     matchingFactor: 0.05,
     maxSpeed: 120,
     minSpeed: 60,
+    boidWidth: 25,
+    boidHeight: 15,
+    boidColor: '#00FF00',
 });
 
 var isAnimationActive = true;
@@ -195,6 +198,8 @@ class Boid{
     static isInRange(boid,otherSprite,Range){
         //TODO make a better distance calc that accounts for sprite size
         var dist = glMatrix.vec2.dist(boid.position,otherSprite.position);
+        var otherRadius = Math.sqrt(((otherSprite.width/2) ** 2) + ((otherSprite.height/2) ** 2)) ;
+        dist -= otherRadius;
         return dist < Range;
     }
 
@@ -343,7 +348,6 @@ var onUpdate = function(deltaTime){
     sprites.forEach(sprite => {
         sprite.update(deltaTime);
     });
-    //screen wrap on boids
     Boid.seperation(
         boids,
         sprites,
@@ -455,11 +459,11 @@ createApp({
         function addBoid(){
             const newboid = new Sprite(
                 sprites.length, // TODO: Implement a new ID system
-                15,
-                15,
-                '#228822',
-                canvasWidth.value/2,
-                canvasHeight.value/2,
+                boidProperties.value.boidWidth,
+                boidProperties.value.boidHeight,
+                boidProperties.value.boidColor,
+                Math.random() * canvasWidth.value,
+                Math.random() * canvasHeight.value,
                 0,
                 30,
                 0,
@@ -467,6 +471,11 @@ createApp({
             );
             sprites.push(newboid);
             boids.push(newboid);
+        }
+        function addBoids(count){
+            for (let step = 0; step < count; step++) {
+                addBoid();
+            }
         }
         function removeEmitter(emitter) {
             emitters.value = emitters.value.filter((t) => t !== emitter);
@@ -476,6 +485,7 @@ createApp({
         }
         return {//html is allowed to know about
             addBoid,
+            addBoids,
             boidProperties,
             canvasHeight,
             canvasWidth,

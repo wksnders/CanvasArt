@@ -154,13 +154,69 @@
                 </div>
             </div>
         </div>
+        <div class="row body-text">
+            <div class="form-field">
+                <label>
+                    <span class="label">New Boid Width</span>
+                    <input 
+                        type="number" 
+                        min="5"  
+                        max="25"
+                        step="1"
+                        v-model.number="boidProperties.boidWidth"
+                    >
+                    <input 
+                        type="range" 
+                        min="5"  
+                        max="25"
+                        step="1"
+                        v-model.number="boidProperties.boidWidth"
+                    >
+                </label>
+            </div>
+            <div class="form-field">
+                <label>
+                    <span class="label">New Boid Height</span>
+                    <input 
+                        type="number" 
+                        min="5"  
+                        max="25"
+                        step="1" 
+                        v-model.number="boidProperties.boidHeight"
+                    >
+                    <input 
+                        type="range" 
+                        min="5" 
+                        max="25"
+                        step="1"
+                        v-model.number="boidProperties.boidHeight"
+                    >
+                </label>
+            </div>
+            <div class="form-field">
+                <label>
+                    <span class="label">New Boid Color</span>
+                    <input 
+                        type="color"
+                        v-model="boidProperties.boidColor"
+                    >
+                </label>
+            </div>
+        </div>
             <div class="row">
                 <div class="form-field subheader-text">
                     <button
                         class="add-boid-button"
                         type="button"
-                        @click="addBoid()"
+                        @click="addBoid"
                     >Add new Boid</button>
+                </div>
+                <div class="form-field subheader-text">
+                    <button
+                        class="add-boid-button"
+                        type="button"
+                        @click="addBoids(10)"
+                    >Add 10 new Boids</button>
                 </div>
             </div>
             <div class="row">
@@ -168,7 +224,7 @@
                     <button
                         class="add-emitter-button"
                         type="button"
-                        @click="addEmitter()"
+                        @click="addEmitter"
                     >Add new Emitter</button>
                 </div>
             </div>
