@@ -55,6 +55,105 @@
                 </label>
             </div>
         </div>
+        <div class="row body-text">
+            <div class="form-field">
+                <label>
+                    <span class="label">Centering Factor</span>
+                    <input 
+                        type="number" 
+                        min="0"  
+                        max=".1"
+                        step=".0001"
+                        v-model.number="boidProperties.centeringFactor"
+                    >
+                    <input 
+                        type="range" 
+                        min="0"  
+                        max=".1"
+                        step=".0001"
+                        v-model.number="boidProperties.centeringFactor"
+                    >
+                </label>
+            </div>
+            <div class="form-field">
+                <label>
+                    <span class="label">Avoid Factor</span>
+                    <input 
+                        type="number" 
+                        min="0"  
+                        max=".1"
+                        step=".001" 
+                        v-model.number="boidProperties.avoidFactor"
+                    >
+                    <input 
+                        type="range" 
+                        min="0" 
+                        max=".1"
+                        step=".001"
+                        v-model.number="boidProperties.avoidFactor"
+                    >
+                </label>
+            </div>
+        </div>
+        <div class="row body-text">
+            <div class="form-field">
+                <label>
+                    <span class="label">matching Factor</span>
+                    <input 
+                        type="number" 
+                        min="0"  
+                        max=".1"
+                        step=".001"
+                        v-model.number="boidProperties.matchingFactor"
+                    >
+                    <input 
+                        type="range" 
+                        min="0" 
+                        max=".1"
+                        step=".001" 
+                        v-model.number="boidProperties.matchingFactor"
+                    >
+                </label>
+            </div>
+        </div>
+        <div class="row body-text">
+            <div class="form-field">
+                <label>
+                    <span class="label">Max Speed</span>
+                    <input 
+                        type="number" 
+                        min="0" 
+                        :max="200" 
+                        v-model.number="boidProperties.maxSpeed"
+                    >
+                    <input 
+                        type="range" 
+                        min="0" 
+                        :max="200" 
+                        v-model.number="boidProperties.maxSpeed"
+                    >
+                </label>
+            </div>
+            <div class="row body-text">
+                <div class="form-field">
+                    <label>
+                        <span class="label">Min Speed</span>
+                        <input 
+                            type="number" 
+                            min="0" 
+                            :max="boidProperties.maxSpeed" 
+                            v-model.number="boidProperties.minSpeed"
+                        >
+                        <input 
+                            type="range" 
+                            min="0" 
+                            :max="boidProperties.maxSpeed" 
+                            v-model.number="boidProperties.minSpeed"
+                        >
+                    </label>
+                </div>
+            </div>
+        </div>
             <div class="row">
                 <div class="form-field subheader-text">
                     <button

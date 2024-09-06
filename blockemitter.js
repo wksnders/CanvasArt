@@ -160,7 +160,6 @@ class Emitter {
         console.info('Emitter emit : emitterX', emitterX, 'emitterY', emitterY);
 
         sprites.push(newSprite);
-        console.info('Emitter emit : sprites.len', sprites.length);
 
     }
 
